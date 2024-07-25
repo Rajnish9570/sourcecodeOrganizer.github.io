@@ -116,21 +116,33 @@
             background-color: #c82333;
         }
 
-        .copy-btn {
+        .copy-btn, .delete-btn {
             position: absolute;
             top: 10px;
-            right: 10px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
             padding: 5px 10px;
             cursor: pointer;
+            border: none;
             border-radius: 3px;
+            color: #fff;
             transition: background-color 0.3s;
+        }
+
+        .copy-btn {
+            right: 50px;
+            background-color: #28a745;
         }
 
         .copy-btn:hover {
             background-color: #218838;
+        }
+
+        .delete-btn {
+            right: 10px;
+            background-color: #dc3545;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
         }
 
         @media (max-width: 600px) {
@@ -203,8 +215,17 @@
                     });
                 };
 
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.classList.add('delete-btn');
+                deleteButton.onclick = () => {
+                    snippetElement.remove();
+                    deleteCodeSnippet(title);
+                };
+
                 snippetElement.appendChild(titleElement);
                 snippetElement.appendChild(copyButton);
+                snippetElement.appendChild(deleteButton);
                 snippetElement.appendChild(codeElement);
                 snippetsContainer.appendChild(snippetElement);
 
@@ -249,11 +270,26 @@
                     });
                 };
 
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.classList.add('delete-btn');
+                deleteButton.onclick = () => {
+                    snippetElement.remove();
+                    deleteCodeSnippet(snippet.title);
+                };
+
                 snippetElement.appendChild(titleElement);
                 snippetElement.appendChild(copyButton);
+                snippetElement.appendChild(deleteButton);
                 snippetElement.appendChild(codeElement);
                 snippetsContainer.appendChild(snippetElement);
             });
+        }
+
+        function deleteCodeSnippet(title) {
+            let snippets = JSON.parse(localStorage.getItem('codeSnippets')) || [];
+            snippets = snippets.filter(snippet => snippet.title !== title);
+            localStorage.setItem('codeSnippets', JSON.stringify(snippets));
         }
     </script>
 </body>
