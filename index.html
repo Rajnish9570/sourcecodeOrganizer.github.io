@@ -50,8 +50,6 @@
             transition: background-color 0.3s;
         }
 
-        
-
         .snippet-title {
             font-weight: bold;
             cursor: pointer;
@@ -130,7 +128,7 @@
         }
        #code{
            resize:none;
-           height: 400px;
+           height: 300px;
        }
         .copy-btn {
             background-color: #36454f;
@@ -171,6 +169,7 @@
     <div id="add-code-form" class="hidden">
         <h2>Add Code Snippet</h2>
         <input type="text" id="title" placeholder="Title" required>
+        <input type="text" id="language" placeholder="Language" required>
         <textarea id="code" placeholder="Paste your code here..." required></textarea>
         <button onclick="addCodeSnippet()">Add</button>
         <button onclick="hideAddCodeForm()">Cancel</button>
@@ -191,16 +190,17 @@
 
         function addCodeSnippet() {
             const title = document.getElementById('title').value;
+            const language = document.getElementById('language').value;
             const code = document.getElementById('code').value;
 
-            if (title && code) {
+            if (title && code && language) {
                 const snippetsContainer = document.getElementById('code-snippets');
                 const snippetElement = document.createElement('div');
                 snippetElement.classList.add('snippet');
 
                 const titleElement = document.createElement('div');
                 titleElement.classList.add('snippet-title');
-                titleElement.textContent = title;
+                titleElement.textContent = `${title} (${language})`;
                 titleElement.onclick = () => {
                     codeElement.classList.toggle('hidden');
                 };
@@ -236,9 +236,10 @@
                 snippetElement.appendChild(buttonContainer);
                 snippetsContainer.appendChild(snippetElement);
 
-                saveCodeSnippet({ title, code });
+                saveCodeSnippet({ title, language, code });
 
                 document.getElementById('title').value = '';
+                document.getElementById('language').value = '';
                 document.getElementById('code').value = '';
                 hideAddCodeForm();
             }
@@ -259,7 +260,7 @@
 
                 const titleElement = document.createElement('div');
                 titleElement.classList.add('snippet-title');
-                titleElement.textContent = snippet.title;
+                titleElement.textContent = `${snippet.title} (${snippet.language})`;
                 titleElement.onclick = () => {
                     codeElement.classList.toggle('hidden');
                 };
