@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Organizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #code-snippets {
+            margin-top: 20px;
+        }
+
+        .snippet {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .snippet-title {
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #add-code-form {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        #add-code-form input,
+        #add-code-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+
+        #add-code-form button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #add-code-form button:last-child {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Code Organizer</h1>
+        <div id="code-snippets">
+            <!-- Code snippets will be added here -->
+        </div>
+        <button onclick="showAddCodeForm()">Add Code Snippet</button>
+    </div>
+
+    <div id="add-code-form" class="hidden">
+        <h2>Add Code Snippet</h2>
+        <input type="text" id="title" placeholder="Title" required>
+        <textarea id="code" placeholder="Paste your code here..." required></textarea>
+        <button onclick="addCodeSnippet()">Add</button>
+        <button onclick="hideAddCodeForm()">Cancel</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCodeSnippets();
+        });
+
+        function showAddCodeForm() {
+            document.getElementById('add-code-form').classList.remove('hidden');
+        }
+
+        function hideAddCodeForm() {
+            document.getElementById('add-code-form').classList.add('hidden');
+        }
+
+        function addCodeSnippet() {
+            const title = document.getElementById('title').value;
+            const code = document.getElementById('code').value;
+
+            if (title && code) {
+                const snippetsContainer = document.getElementById('code-snippets');
+                const snippetElement = document.createElement('div');
+                snippetElement.classList.add('snippet');
+
+                const titleElement = document.createElement('div');
+                titleElement.classList.add('snippet-title');
+                titleElement.textContent = title;
+                titleElement.onclick = () => {
+                    codeElement.classList.toggle('hidden');
+                };
+
+                const codeElement = document.createElement('pre');
+                codeElement.textContent = code;
+                codeElement.classList.add('hidden');
+
+                const copyButton = document.createElement('button');
+                copyButton.textContent = 'Copy';
+                copyButton.onclick = () => {
+                    navigator.clipboard.writeText(code).then(() => {
+                        alert('Code copied to clipboard!');
+                    });
+                };
+
+                snippetElement.appendChild(titleElement);
+                snippetElement.appendChild(copyButton);
+                snippetElement.appendChild(codeElement);
+                snippetsContainer.appendChild(snippetElement);
+
+                saveCodeSnippet({ title, code });
+
+                document.getElementById('title').value = '';
+                document.getElementById('code').value = '';
+                hideAddCodeForm();
+            }
+        }
+
+        function saveCodeSnippet(snippet) {
+            const snippets = JSON.parse(localStorage.getItem('codeSnippets')) || [];
+            snippets.push(snippet);
+            localStorage.setItem('codeSnippets', JSON.stringify(snippets));
+        }
+
+        function loadCodeSnippets() {
+            const snippets = JSON.parse(localStorage.getItem('codeSnippets')) || [];
+            const snippetsContainer = document.getElementById('code-snippets');
+            snippets.forEach(snippet => {
+                const snippetElement = document.createElement('div');
+                snippetElement.classList.add('snippet');
+
+                const titleElement = document.createElement('div');
+                titleElement.classList.add('snippet-title');
+                titleElement.textContent = snippet.title;
+                titleElement.onclick = () => {
+                    codeElement.classList.toggle('hidden');
+                };
+
+                const codeElement = document.createElement('pre');
+                codeElement.textContent = snippet.code;
+                codeElement.classList.add('hidden');
+
+                const copyButton = document.createElement('button');
+                copyButton.textContent = 'Copy';
+                copyButton.onclick = () => {
+                    navigator.clipboard.writeText(snippet.code).then(() => {
+                        alert('Code copied to clipboard!');
+                    });
+                };
+
+                snippetElement.appendChild(titleElement);
+                snippetElement.appendChild(copyButton);
+                snippetElement.appendChild(codeElement);
+                snippetsContainer.appendChild(snippetElement);
+            });
+        }
+    </script>
+</body>
+</html>
